@@ -1,7 +1,21 @@
 const express = require('express');
+const axios = require('axios');
 const app = express();
-const PORT = process.env.PORT || 3000;
-app.use(express.json());
+
+// Use environment variables for configuration
+const API_URL = process.env.API_URL || 'https://customizable-caching-api-hazel.vercel.app/cache'; // Updated for Vercel
+const MAIN_SERVER_URL = process.env.MAIN_SERVER_URL || 'https://customizable-caching-api-hazel.vercel.app'; // Updated for Vercel
+
+// Function to get the current cache size limit from the first server (updated)
+async function getCacheSize() {
+    try {
+        const response = await axios.get(MAIN_SERVER_URL); // Use MAIN_SERVER_URL for Vercel
+        const cacheSize = response.data.cacheSize || 10;
+        return cacheSize;
+    } catch (error) {
+        throw new Error(`Failed to fetch cache size from ${MAIN_SERVER_URL}. Make sure the server is running and accessible.`);
+    }
+}
 
 // Dynamic test endpoint (updated for Vercel)
 app.get('/test', async (req, res) => {
@@ -27,7 +41,5 @@ app.get('/test', async (req, res) => {
     }
 });
 
-
 // Important: Export the app for Vercel
 module.exports = app;
-
